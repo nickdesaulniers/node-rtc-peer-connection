@@ -7,8 +7,6 @@ function uuid () {
   });
 };
 
-function logErr (err) { console.error(err); };
-
 RTC.prototype.buildWS = function (url) {
   if (this.ws) return;
   var ws = new WebSocket(url);
@@ -48,14 +46,14 @@ RTC.prototype.onmessage = function (msg) {
         return peer.setLocalDescription(answer);
       }).then(function () {
         this.ws.send(JSON.stringify(peer.localDescription));
-      }.bind(this)).catch(logErr);
+      }.bind(this)).catch(this.logErr);
     } else if (msg.type === 'answer') {
-      peer.setRemoteDescription(sd).catch(logErr);
+      peer.setRemoteDescription(sd).catch(this.logErr);
     }
   } else if (msg.candidate) {
     var ic = new RTCIceCandidate(msg);
     console.log(msg);
-    peer.addIceCandidate(ic).catch(logErr);
+    peer.addIceCandidate(ic).catch(this.logErr);
   }
 };
 
