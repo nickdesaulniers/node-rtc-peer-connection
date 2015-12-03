@@ -64,7 +64,7 @@ udp.on('message', function (msg, rinfo) {
   // requests from the peer. TODO: find if the RFC says this explicitly.
   if (type === Packet.BINDING_REQUEST && theirSdp /* && weTrustThisIpFromSignallingServ */) {
     stun.respondToBindingRequest(udp, rinfo, p, theirSdp.getUserName(),
-      mySdp.getPassword());
+      mySdp);
   }
   //console.log(Packet.typeToString(p));
   //console.log(p.doc.attribute);
