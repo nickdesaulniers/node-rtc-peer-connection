@@ -1,7 +1,9 @@
-# Node-WebRTCPeerConnection
+# Node-RTCPeerConnection
 
 An attempt (current WIP) to create a spec compliant implementation of
-RTCPeerConnection for Node.js.
+RTCPeerConnection for Node.js. This enables browser-peers to speak to
+non-browser (Node.js) peers, or non-browser peer to non-browser peer
+communication over RTCDataChannels.
 
 ## Status
 
