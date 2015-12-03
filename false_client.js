@@ -1,30 +1,24 @@
-var fs = require('fs');
+var iceChar = require('./ice-ufrag-pwd');
 var myStun = require('./my_stun');
-var sdpTransform = require('sdp-transform');
 var WebSocket = require('ws');
 var Packet = require('vs-stun/lib/Packet');
 var stun = require('vs-stun');
+var SDP = require('./sdp');
 
-var sdp = {
-  sdp: fs.readFileSync('./offer_no_stun.txt', { encoding: 'utf8' }),
-  type: 'offer',
-};
-
-function updateSdpObj (info) {
-  var obj = sdpTransform.parse(sdp.sdp);
-  obj.media[0].connection.ip = info.external.addr;
-  obj.media[0].port = info.external.port;
-  sdp.sdp = sdpTransform.write(obj);
-};
+var sdp = new SDP;
 
 function stunReceived (err, info) {
   if (err) throw err;
   console.log('stun', info);
-  updateSdpObj(info);
+  sdp.setExternalAddr(info.external.addr);
+  sdp.setExternalPort(info.external.port);
 
   var ws = new WebSocket('ws://localhost:8081');
   ws.on('open', function () {
-    ws.send(JSON.stringify(sdp));
+    ws.send(JSON.stringify({
+      sdp: sdp.toString(),
+      type: 'offer',
+    }));
     ws.send(JSON.stringify({
       candidate: info.getLocalString(),
     }));
@@ -59,7 +53,6 @@ function respondToBindingRequest (socket, rinfo, transactionId, username) {
   //packet.append.username(username);
   packet.append.messageIntegrity();
   //packet.append.fingerprint();
-  //console.log(packet);
   socket.send(packet.raw, 0, packet.raw.length, rinfo.port, rinfo.address);
 };
 
