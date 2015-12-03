@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "sdp-transform": "^1.5.3",
+    "vs-stun": "0.0.7",
+    "ws": "^0.8.1"
+  }
+}
