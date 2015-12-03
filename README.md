@@ -1,7 +1,7 @@
-# Node-ICE
+# Node-WebRTCPeerConnection
 
-An attempt (current WIP) to create an RFC 5245 Interactive Connectivity
-Establishment (ICE) client for Node.js.
+An attempt (current WIP) to create a spec compliant implementation of
+RTCPeerConnection for Node.js.
 
 ## Status
 
