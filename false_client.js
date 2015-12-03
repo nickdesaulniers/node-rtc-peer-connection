@@ -1,15 +1,16 @@
 var iceChar = require('./ice-ufrag-pwd');
-var myStun = require('./my_stun');
+var ipInfo = require('./ip_info');
 var WebSocket = require('ws');
 var Packet = require('vs-stun/lib/Packet');
 var stun = require('vs-stun');
 var SDP = require('./sdp');
 
 var sdp = new SDP;
+var theirSdp = null;
 
 function stunReceived (err, info) {
   if (err) throw err;
-  console.log('stun', info);
+  console.log('ipInfo', info);
   sdp.setExternalAddr(info.external.addr);
   sdp.setExternalPort(info.external.port);
 
@@ -27,8 +28,12 @@ function stunReceived (err, info) {
     }));
   });
 
-  ws.on('message', function (msg) {
-    msg = JSON.parse(msg);
+  ws.on('message', function (e) {
+    var msg = JSON.parse(e);
+    if (msg.type && msg.type === 'answer' && msg.sdp) {
+      // we've received their sdp
+      // pull put their username/pw
+    }
     console.log(msg);
   });
 };
@@ -47,6 +52,7 @@ function printDebugPacket (p) {
   }
 };
 
+// http://tools.ietf.org/html/rfc5389#section-10.1.2
 function respondToBindingRequest (socket, rinfo, transactionId, username) {
   var packet = stun.create.bindingSuccess();
   Packet.setTransactionID(packet, transactionId);
@@ -57,7 +63,7 @@ function respondToBindingRequest (socket, rinfo, transactionId, username) {
 };
 
 // http://tools.ietf.org/html/rfc5245 ICE
-var udp = myStun(stunReceived);
+var udp = ipInfo(stunReceived);
 udp.on('error', console.error.bind(console));
 udp.on('message', function (msg, rinfo) {
   console.log('Received %d bytes from %s:%d',
