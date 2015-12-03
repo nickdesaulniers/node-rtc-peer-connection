@@ -1,9 +1,10 @@
 var iceChar = require('./ice-ufrag-pwd');
 var ipInfo = require('./ip_info');
 var WebSocket = require('ws');
+// TODO: move all logic w/ Packet to ./stun.js
 var Packet = require('vs-stun/lib/Packet');
-var stun = require('vs-stun');
 var SDP = require('./sdp');
+var stun = require('./stun');
 
 var sdp = new SDP;
 var theirSdp = null;
@@ -52,17 +53,6 @@ function printDebugPacket (p) {
   }
 };
 
-// http://tools.ietf.org/html/rfc5389#section-10.1.2
-function respondToBindingRequest (socket, rinfo, transactionId, username) {
-  var packet = stun.create.bindingSuccess();
-  Packet.setTransactionID(packet, transactionId);
-  //packet.append.username(username);
-  packet.append.messageIntegrity();
-  //packet.append.fingerprint();
-  socket.send(packet.raw, 0, packet.raw.length, rinfo.port, rinfo.address);
-};
-
-// http://tools.ietf.org/html/rfc5245 ICE
 var udp = ipInfo(stunReceived);
 udp.on('error', console.error.bind(console));
 udp.on('message', function (msg, rinfo) {
@@ -72,8 +62,7 @@ udp.on('message', function (msg, rinfo) {
   printDebugPacket(p);
   var type = Packet.getType(p);
   if (type === Packet.BINDING_REQUEST /* && weTrustThisIpFromSignallingServ */) {
-    respondToBindingRequest(udp, rinfo, Packet.getTransactionID(p),
-      p.doc.attribute.username);
+    stun.respondToBindingRequest(udp, rinfo, p);
   }
   //console.log(Packet.typeToString(p));
   //console.log(p.doc.attribute);
