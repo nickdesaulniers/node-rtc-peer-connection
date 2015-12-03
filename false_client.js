@@ -6,19 +6,19 @@ var Packet = require('vs-stun/lib/Packet');
 var SDP = require('./sdp');
 var stun = require('./stun');
 
-var sdp = new SDP;
+var mySdp = new SDP;
 var theirSdp = null;
 
 function stunReceived (err, info) {
   if (err) throw err;
   console.log('ipInfo', info);
-  sdp.setExternalAddr(info.external.addr);
-  sdp.setExternalPort(info.external.port);
+  mySdp.setExternalAddr(info.external.addr);
+  mySdp.setExternalPort(info.external.port);
 
   var ws = new WebSocket('ws://localhost:8081');
   ws.on('open', function () {
     ws.send(JSON.stringify({
-      sdp: sdp.toString(),
+      sdp: mySdp.toString(),
       type: 'offer',
     }));
     ws.send(JSON.stringify({
@@ -32,8 +32,7 @@ function stunReceived (err, info) {
   ws.on('message', function (e) {
     var msg = JSON.parse(e);
     if (msg.type && msg.type === 'answer' && msg.sdp) {
-      // we've received their sdp
-      // pull put their username/pw
+      theirSdp = new SDP(msg.sdp);
     }
     console.log(msg);
   });
@@ -61,8 +60,11 @@ udp.on('message', function (msg, rinfo) {
   var p = Packet.parse(msg);
   printDebugPacket(p);
   var type = Packet.getType(p);
-  if (type === Packet.BINDING_REQUEST /* && weTrustThisIpFromSignallingServ */) {
-    stun.respondToBindingRequest(udp, rinfo, p);
+  // If the signaling server has yet to send us their sdp info, drop binding
+  // requests from the peer. TODO: find if the RFC says this explicitly.
+  if (type === Packet.BINDING_REQUEST && theirSdp /* && weTrustThisIpFromSignallingServ */) {
+    stun.respondToBindingRequest(udp, rinfo, p, theirSdp.getUserName(),
+      mySdp.getPassword());
   }
   //console.log(Packet.typeToString(p));
   //console.log(p.doc.attribute);

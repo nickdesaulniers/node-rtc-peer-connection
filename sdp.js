@@ -3,8 +3,8 @@ var sdpTransform = require('sdp-transform');
 
 var falseSdpStr = fs.readFileSync('./offer_no_stun.txt', { encoding: 'utf8' });
 
-function SDP () {
-  this.sdpObj = sdpTransform.parse(falseSdpStr);
+function SDP (str) {
+  this.sdpObj = sdpTransform.parse(str || falseSdpStr);
 };
 
 SDP.prototype.getExternalAddr = function () {
@@ -23,10 +23,21 @@ SDP.prototype.setExternalPort = function (port) {
   this.sdpObj.media[0].port = port;
 };
 
-SDP.prototype.getUserName = function () {};
-SDP.prototype.setUsername = function () {};
-SDP.prototype.getPassword = function () {};
-SDP.prototype.setPassword = function () {};
+SDP.prototype.getUserName = function () {
+  return this.sdpObj.media[0].iceUfrag;
+};
+
+SDP.prototype.setUsername = function (username) {
+  this.sdpObj.media[0].iceUfrag = username;
+};
+
+SDP.prototype.getPassword = function () {
+  return this.sdpObj.media[0].icePwd;
+};
+
+SDP.prototype.setPassword = function (password) {
+  this.sdpObj.media[0].icePwd = password;
+};
 
 SDP.prototype.toString = function () {
   return sdpTransform.write(this.sdpObj);
