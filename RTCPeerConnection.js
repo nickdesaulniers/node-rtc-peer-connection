@@ -74,7 +74,11 @@ RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict
   var channel = new RTCDataChannel;
   channel.label = label;
 
-  // TODO: 4, 5, ...
+  // TODO: steps 4 - 9, GH Issue #11
+
+  return channel;
+
+  // TODO: steps 11, 12, GH Issue #4
 };
 
 module.exports = RTCPeerConnection;
