@@ -1,5 +1,6 @@
 var udp = require('dgram');
 var EventEmitter = require('events');
+var os = require('os');
 var util = require('util');
 var url = require('url');
 var vsStun = require('vs-stun');
@@ -37,6 +38,21 @@ IceAgent.prototype.getFirstStunServer = function () {
   };
 };
 
+IceAgent.prototype.getLocalIp = function () {
+  var ifaces = os.networkInterfaces();
+  var ids = Object.keys(ifaces);
+  for (var i = 0; i < ids.length; ++i) {
+    var id = ids[i];
+    var iface = ifaces[id];
+    for (var j = 0; j < iface.length; ++j) {
+      var conn = iface[j];
+      if (conn.family === 'IPv4' && !conn.internal) {
+        return conn.address;
+      }
+    }
+  }
+};
+
 IceAgent.prototype.onlistening = function (e) {
   var stunServer = this.getFirstStunServer();
   vsStun.resolve(this.socket, stunServer, function (error, value) {
@@ -44,6 +60,8 @@ IceAgent.prototype.onlistening = function (e) {
       this.emit('error', error);
       return;
     }
+    var ip = this.getLocalIp();
+    this.internal.addr = this.getLocalIp();
     this.internal.port = value.local.port;
     this.external.addr = value.public.host;
     this.external.port = value.public.port;
