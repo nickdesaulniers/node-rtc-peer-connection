@@ -5,10 +5,12 @@ var util = require('util');
 var url = require('url');
 var vsStun = require('vs-stun');
 
-function IceAgent () {
+function IceAgent (config) {
   EventEmitter.call(this);
 
-  this.socket = udp.createSocket('udp4');
+  // hmm, so the ice agent is going to manage multiple sockets
+  this.sockets = new Map;
+
   this.internal = {
     addr: null,
     port: null,
@@ -17,16 +19,28 @@ function IceAgent () {
     addr: null,
     port: null,
   };
-  this.config = null;
-
-  this.socket.on('listening', this.onlistening.bind(this));
+  this.config = config;
 };
 
 util.inherits(IceAgent, EventEmitter);
 
-IceAgent.prototype.init = function (config) {
-  this.config = config;
-  this.socket.bind();
+IceAgent.prototype.init = function (datachannel) {
+  var socket = udp.createSocket('udp4');
+  this.sockets[datachannel] = socket;
+
+  var iceAgent = this;
+  socket.on('listening', function () {
+    var stunServer = iceAgent.getFirstStunServer();
+    vsStun.resolve(socket, stunServer, function (error, value) {
+      if (error) {
+        iceAgent.emit('error', error);
+        return;
+      }
+      iceAgent.emit('open', datachannel);
+    });
+  });
+
+  socket.bind();
 };
 
 IceAgent.prototype.getFirstStunServer = function () {
@@ -51,21 +65,6 @@ IceAgent.prototype.getLocalIp = function () {
       }
     }
   }
-};
-
-IceAgent.prototype.onlistening = function (e) {
-  var stunServer = this.getFirstStunServer();
-  vsStun.resolve(this.socket, stunServer, function (error, value) {
-    if (error) {
-      this.emit('error', error);
-      return;
-    }
-    var ip = this.getLocalIp();
-    this.internal.addr = this.getLocalIp();
-    this.internal.port = value.local.port;
-    this.external.addr = value.public.host;
-    this.external.port = value.public.port;
-  }.bind(this));
 };
 
 module.exports = IceAgent;

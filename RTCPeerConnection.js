@@ -11,7 +11,6 @@ function RTCPeerConnection (configuration) {
   this._info = null;
   this._configuration = null;
   this._operations = [];
-  this._iceAgent = new IceAgent;
   this._dataChannels = [];
   // https://w3c.github.io/webrtc-pc/#dom-peerconnection
   this.setConfiguration(configuration);
@@ -22,6 +21,19 @@ function RTCPeerConnection (configuration) {
   this.currentLocalDescription = null;
   this.pendingRemoteDescription = null;
   this.currentRemoteDescription = null;
+
+  this._iceAgent = new IceAgent(this.getConfiguration());
+  this._iceAgent.on('open', this._channelOpen);
+};
+
+RTCPeerConnection.prototype._channelOpen = function (channel) {
+  // https://w3c.github.io/webrtc-pc/#announce-datachannel-open
+  if (this.signalingState === 'closed') {
+    console.error('datachannel opened but signaling state closed');
+    return;
+  }
+  channel.readyState = 'open';
+  channel.dispatchEvent({ type: 'open' });
 };
 
 RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
@@ -85,7 +97,7 @@ RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict
 
   // steps 11, 12
   setImmediate(function () {
-    this._iceAgent.init(this.getConfiguration());
+    this._iceAgent.init(channel, this.getConfiguration());
   }.bind(this));
 
   return channel;
