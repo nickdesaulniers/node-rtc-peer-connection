@@ -1,6 +1,7 @@
 var SDP = require('./sdp');
 var promisify = require('promisify-node');
 var ipInfo = promisify(require('./ip_info'));
+var RTCDataChannel = require('./RTCDataChannel');
 
 // https://w3c.github.io/webrtc-pc/#idl-def-RTCPeerConnection
 function RTCPeerConnection (configuration) {
@@ -60,6 +61,20 @@ RTCPeerConnection.prototype.createOffer = function () {
 RTCPeerConnection.prototype.getConfiguration = function () {};
 RTCPeerConnection.prototype.setConfiguration = function (configuration) {
   this.configuration = configuration;
+};
+
+RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict) {
+  // https://w3c.github.io/webrtc-pc/#methods-9
+  label = label || '';
+
+  if (this.signalingState === 'closed') {
+    throw new Error('InvalidStateError');
+  }
+
+  var channel = new RTCDataChannel;
+  channel.label = label;
+
+  // TODO: 4, 5, ...
 };
 
 module.exports = RTCPeerConnection;
