@@ -1,6 +1,12 @@
 var udp = require('dgram');
+var EventEmitter = require('events');
+var util = require('util');
+var url = require('url');
+var vsStun = require('vs-stun');
 
 function IceAgent () {
+  EventEmitter.call(this);
+
   this.socket = udp.createSocket('udp4');
   this.internal = {
     addr: null,
@@ -10,17 +16,38 @@ function IceAgent () {
     addr: null,
     port: null,
   };
+  this.config = null;
 
-  this.socket.on('listening', this.onlistening);
+  this.socket.on('listening', this.onlistening.bind(this));
 };
 
+util.inherits(IceAgent, EventEmitter);
+
 IceAgent.prototype.init = function (config) {
-  // have to parse the stun server info out from config, GH Issue #12
+  this.config = config;
   this.socket.bind();
 };
 
-IceAgent.prototype.onlistening = function (fn) {
-  // ...
+IceAgent.prototype.getFirstStunServer = function () {
+  var servers = this.config.iceServers;
+  var urlp = url.parse(servers[0].urls);
+  return {
+    host: urlp.hostname,
+    port: urlp.port,
+  };
+};
+
+IceAgent.prototype.onlistening = function (e) {
+  var stunServer = this.getFirstStunServer();
+  vsStun.resolve(this.socket, stunServer, function (error, value) {
+    if (error) {
+      this.emit('error', error);
+      return;
+    }
+    this.internal.port = value.local.port;
+    this.external.addr = value.public.host;
+    this.external.port = value.public.port;
+  }.bind(this));
 };
 
 module.exports = IceAgent;
