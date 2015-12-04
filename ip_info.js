@@ -19,6 +19,7 @@ function IpInfo (internalPort, externalAddr, externalPort) {
 };
 
 IpInfo.prototype = {
+  // TODO: BAD this should be part of SDP generation, GH Issue #8
   getLocalString: function () {
     return 'candidate:0 1 UDP 2122252543 ' + this.internal.addr + ' ' +
       this.internal.port + ' typ host';

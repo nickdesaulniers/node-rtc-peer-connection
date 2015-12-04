@@ -2,12 +2,14 @@ var SDP = require('./sdp');
 var promisify = require('promisify-node');
 var ipInfo = promisify(require('./ip_info'));
 var RTCDataChannel = require('./RTCDataChannel');
+var IceAgent = require('./ice');
 
 // https://w3c.github.io/webrtc-pc/#idl-def-RTCPeerConnection
 function RTCPeerConnection (configuration) {
   // for debugging, will contain internal/external ip and ports after
   // createOffer
   this._info = null;
+  this._configuration = null;
   // https://w3c.github.io/webrtc-pc/#dom-peerconnection
   this.setConfiguration(configuration);
   this.signalingState = 'stable';
@@ -18,6 +20,7 @@ function RTCPeerConnection (configuration) {
   this.pendingRemoteDescription = null;
   this.currentRemoteDescription = null;
   this._operations = [];
+  this._iceAgent = new IceAgent;
 };
 
 RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
@@ -60,7 +63,7 @@ RTCPeerConnection.prototype.createOffer = function () {
 
 RTCPeerConnection.prototype.getConfiguration = function () {};
 RTCPeerConnection.prototype.setConfiguration = function (configuration) {
-  this.configuration = configuration;
+  this._configuration = configuration;
 };
 
 RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict) {
