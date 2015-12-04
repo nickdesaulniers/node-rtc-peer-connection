@@ -19,7 +19,7 @@ function RTCPeerConnection (configuration) {
   this._operations = [];
 };
 
-function constructSDPFromInfo (info) {
+RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
   this._info = info;
 
   var sdp = new SDP;
@@ -33,8 +33,28 @@ function constructSDPFromInfo (info) {
   };
 };
 
+// This is part of the WebRTC spec (cmd+f 'general idea') under S 4.3.1
+RTCPeerConnection.prototype._oneAtATime = function (fn) {
+  var p = null;
+  this._operations.push(fn);
+  if (this._operations.length === 1) {
+    p = Promise.resolve(this._operations[0].call(this));
+  } else {
+    console.warn('more than one _oneAtATime function invoked');
+    p = new Promise(function (resolve, reject) {
+      this._operations.splice(this._operations.indexOf(fn), 1);
+      if (this._operations.length > 0) {
+        resolve(this._operations[0].call(this));
+      }
+    }.bind(this));
+  }
+  return p;
+};
+
 RTCPeerConnection.prototype.createOffer = function () {
-  return ipInfo().then(constructSDPFromInfo.bind(this));
+  return this._oneAtATime(function () {
+    return ipInfo().then(this.constructSDPFromInfo);
+  });
 };
 
 RTCPeerConnection.prototype.getConfiguration = function () {};
