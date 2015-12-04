@@ -10,6 +10,9 @@ function RTCPeerConnection (configuration) {
   // createOffer
   this._info = null;
   this._configuration = null;
+  this._operations = [];
+  this._iceAgent = new IceAgent;
+  this._dataChannels = [];
   // https://w3c.github.io/webrtc-pc/#dom-peerconnection
   this.setConfiguration(configuration);
   this.signalingState = 'stable';
@@ -19,8 +22,6 @@ function RTCPeerConnection (configuration) {
   this.currentLocalDescription = null;
   this.pendingRemoteDescription = null;
   this.currentRemoteDescription = null;
-  this._operations = [];
-  this._iceAgent = new IceAgent;
 };
 
 RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
@@ -61,7 +62,10 @@ RTCPeerConnection.prototype.createOffer = function () {
   });
 };
 
-RTCPeerConnection.prototype.getConfiguration = function () {};
+RTCPeerConnection.prototype.getConfiguration = function () {
+  return this._configuration;
+};
+
 RTCPeerConnection.prototype.setConfiguration = function (configuration) {
   this._configuration = configuration;
 };
@@ -78,6 +82,11 @@ RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict
   channel.label = label;
 
   // TODO: steps 4 - 9, GH Issue #11
+
+  // steps 11, 12
+  setImmediate(function () {
+    this._iceAgent.init(this.getConfiguration());
+  }.bind(this));
 
   return channel;
 

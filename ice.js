@@ -10,10 +10,17 @@ function IceAgent () {
     addr: null,
     port: null,
   };
+
+  this.socket.on('listening', this.onlistening);
 };
 
-IceAgent.prototype.bind = function (fn) {
-  this.socket.bind(fn);
+IceAgent.prototype.init = function (config) {
+  // have to parse the stun server info out from config, GH Issue #12
+  this.socket.bind();
+};
+
+IceAgent.prototype.onlistening = function (fn) {
+  // ...
 };
 
 module.exports = IceAgent;

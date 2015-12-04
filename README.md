@@ -25,6 +25,7 @@ reload Firefox tab, and iterating.
 * [RFC 5389 - STUN (Session Traversal Utilities for NAT)](https://tools.ietf.org/html/rfc5389)
 * [RFC 5766 - TURN (Traversal Using Relays around NAT)](https://tools.ietf.org/html/rfc5766)
 * [RFC 6347 - DTLS (Datagram Transport Layer Security)](https://tools.ietf.org/html/rfc6347)
+* [RFC 7064 - STUN URI Scheme](https://tools.ietf.org/html/rfc7064)
 
 ## WebRTC Spec
 
