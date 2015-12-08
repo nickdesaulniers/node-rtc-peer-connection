@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "event-target-shim": "^1.0.7",
+    "event-target-shim": "^1.1.0",
     "promisify-node": "^0.3.0",
     "sdp-transform": "^1.5.3",
     "vs-stun": "0.0.7",

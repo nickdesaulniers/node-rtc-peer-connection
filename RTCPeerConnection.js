@@ -1,15 +1,20 @@
+var EventTarget = require('event-target-shim');
 var SDP = require('./sdp');
 var promisify = require('promisify-node');
 var ipInfo = promisify(require('./ip_info'));
 var RTCDataChannel = require('./RTCDataChannel');
 var IceAgent = require('./ice');
+var util = require('util');
 
 // https://w3c.github.io/webrtc-pc/#idl-def-RTCPeerConnection
 function RTCPeerConnection (configuration) {
+  EventTarget.call(this);
+
   // for debugging, will contain internal/external ip and ports after
   // createOffer
   this._info = null;
   this._configuration = null;
+  this._markedForNegotiation = false;
   this._operations = [];
   this._dataChannels = [];
   // https://w3c.github.io/webrtc-pc/#dom-peerconnection
@@ -23,18 +28,14 @@ function RTCPeerConnection (configuration) {
   this.currentRemoteDescription = null;
 
   this._iceAgent = new IceAgent(this.getConfiguration());
-  this._iceAgent.on('open', this._channelOpen);
+  this._iceAgent.on('open', this._channelOpen.bind(this));
 };
 
-RTCPeerConnection.prototype._channelOpen = function (channel) {
-  // https://w3c.github.io/webrtc-pc/#announce-datachannel-open
-  if (this.signalingState === 'closed') {
-    console.error('datachannel opened but signaling state closed');
-    return;
-  }
-  channel.readyState = 'open';
-  channel.dispatchEvent({ type: 'open' });
-};
+var emittedEvents = [
+  'negotiationneeded'
+];
+
+util.inherits(RTCPeerConnection, EventTarget(emittedEvents));
 
 RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
   this._info = info;
@@ -92,17 +93,28 @@ RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict
 
   var channel = new RTCDataChannel;
   channel.label = label;
+  this._dataChannels.push(channel);
 
   // TODO: steps 4 - 9, GH Issue #11
 
-  // steps 11, 12
   setImmediate(function () {
     this._iceAgent.init(channel, this.getConfiguration());
   }.bind(this));
 
   return channel;
+};
 
-  // TODO: steps 11, 12, GH Issue #4
+RTCPeerConnection.prototype._channelOpen = function (channel) {
+  // https://w3c.github.io/webrtc-pc/#announce-datachannel-open
+  if (this.signalingState === 'closed') {
+    console.error('datachannel opened but signaling state closed');
+    return;
+  }
+  channel.readyState = 'open';
+  channel.dispatchEvent({ type: 'open' });
+  if (this._dataChannels.length === 1) {
+    this.dispatchEvent({ type: 'negotiationneeded' });
+  }
 };
 
 module.exports = RTCPeerConnection;
