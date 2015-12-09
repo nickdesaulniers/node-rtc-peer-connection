@@ -26,6 +26,7 @@ function RTCPeerConnection (configuration) {
   this.currentLocalDescription = null;
   this.pendingRemoteDescription = null;
   this.currentRemoteDescription = null;
+  this.localDescription = null;
 
   this._iceAgent = new IceAgent(this.getConfiguration());
   this._iceAgent.on('open', this._channelOpen.bind(this));
@@ -115,6 +116,16 @@ RTCPeerConnection.prototype._channelOpen = function (channel) {
   if (this._dataChannels.length === 1) {
     this.dispatchEvent({ type: 'negotiationneeded' });
   }
+};
+
+RTCPeerConnection.prototype.setLocalDescription = function (desc) {
+  // https://w3c.github.io/webrtc-pc/#widl-RTCPeerConnection-createOffer-Promise-RTCSessionDescription--RTCOfferOptions-options
+
+  // TODO: verify that desc is a RTCSessionDescriptionInit
+  // https://w3c.github.io/webrtc-pc/#idl-def-RTCSessionDescriptionInit
+  this.localDescription = desc;
+
+  return Promise.resolve(void 0);
 };
 
 module.exports = RTCPeerConnection;
