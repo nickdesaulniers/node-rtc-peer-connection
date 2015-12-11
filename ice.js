@@ -8,8 +8,15 @@ var vsStun = require('vs-stun');
 function IceAgent (config) {
   EventEmitter.call(this);
 
-  // hmm, so the ice agent is going to manage multiple sockets
+  // hmm, so the ice agent is going to manage multiple sockets.
+  // TODO: should be multiple candidates, maybe the candidate interface manages
+  // sockets.
   this.sockets = new Map;
+
+  // https://tools.ietf.org/html/rfc5245#section-2.2
+  this.candidates = [];
+  this.candidatePairs = [];
+  this.checks = [];
 
   this.internal = {
     addr: null,
@@ -65,6 +72,15 @@ IceAgent.prototype.getLocalIp = function () {
       }
     }
   }
+};
+
+IceAgent.prototype.gatherAllCandidates = function () {
+  // https://tools.ietf.org/html/rfc5245#section-2.2
+
+  // It sounds like the caller gathers all candidates, before sending the
+  // encoded sdp over the signalling channel.
+
+
 };
 
 module.exports = IceAgent;
