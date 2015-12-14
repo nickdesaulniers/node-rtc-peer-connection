@@ -1,6 +1,7 @@
 var udp = require('dgram');
 var EventEmitter = require('events');
-var os = require('os');
+var forEachInet = require('./forEachInet');
+var ICECandidate = require('./ice-candidate');
 var util = require('util');
 var url = require('url');
 var vsStun = require('vs-stun');
@@ -59,28 +60,49 @@ IceAgent.prototype.getFirstStunServer = function () {
   };
 };
 
-IceAgent.prototype.getLocalIp = function () {
-  var ifaces = os.networkInterfaces();
-  var ids = Object.keys(ifaces);
-  for (var i = 0; i < ids.length; ++i) {
-    var id = ids[i];
-    var iface = ifaces[id];
-    for (var j = 0; j < iface.length; ++j) {
-      var conn = iface[j];
-      if (conn.family === 'IPv4' && !conn.internal) {
-        return conn.address;
-      }
-    }
-  }
-};
-
 IceAgent.prototype.gatherAllCandidates = function () {
   // https://tools.ietf.org/html/rfc5245#section-2.2
+  // https://tools.ietf.org/html/rfc5245#section-4.1.1
 
   // It sounds like the caller gathers all candidates, before sending the
-  // encoded sdp over the signalling channel.
+  // encoded sdp over the signaling channel.
 
+  var promises = [];
+  promises.push(this.gatherHostCandidates());
+  return Promise.all(promises).then(function (candidates) {
+    return candidates;
+  });
 
+};
+
+IceAgent.prototype.isLinkLocalAddress = function (inet) {
+  // https://en.wikipedia.org/wiki/Link-local_address
+  // TODO: handle ipv4 link local addresses
+  return inet.family === 'IPv6' && inet.address.startsWith('fe80::');
+};
+
+IceAgent.prototype.gatherHostCandidates = function () {
+  var promises = [];
+  // https://tools.ietf.org/html/rfc5245#section-4.1.1.1
+  var self = this;
+  forEachInet(function (inet) {
+    // Do not include link local addresses
+    // https://tools.ietf.org/html/draft-ietf-ice-rfc5245bis-00#section-4.1.1.1
+    if (self.isLinkLocalAddress(inet)) {
+      return;
+    }
+    if (inet.internal) {
+      return;
+    }
+    var socketType = inet.family === 'IPv4' ? 'udp4' : 'udp6';
+    var socket = dgram.createSocket(socketType);
+    promises.push(new Promise(function (resolve, reject) {
+      socket.bind(null, inet.address, function () {
+        resolve(new ICECandidate(ICECandidate.TYPES.HOST, socket));
+      });
+    }));
+  });
+  return Promise.all(promises);
 };
 
 module.exports = IceAgent;

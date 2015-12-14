@@ -1,8 +1,8 @@
-function ICECandidate (type, addr, port, foundation) {
+function ICECandidate (type, socket, foundation) {
   // https://tools.ietf.org/html/rfc5245#section-2.1
   this.type = type;
-  this.addr = addr;
-  this.port = port;
+  // socket.address() returns an object with port and address members
+  this.socket = socket;
   this.foundation = foundation;
 };
 
@@ -18,4 +18,6 @@ ICECandidate.TYPES = {
 // https://tools.ietf.org/html/rfc5245#section-2.4
 // TODO: candidate pairs also have a foundation
 ICECandidate.FOUNDATIONS = {};
+
+module.exports = ICECandidate;
 

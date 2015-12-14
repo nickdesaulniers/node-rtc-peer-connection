@@ -38,7 +38,7 @@ var emittedEvents = [
 
 util.inherits(RTCPeerConnection, EventTarget(emittedEvents));
 
-RTCPeerConnection.prototype.constructSDPFromInfo = function (info) {
+RTCPeerConnection.prototype._constructSDPFromInfo = function (info) {
   this._info = info;
 
   var sdp = new SDP;
@@ -72,7 +72,7 @@ RTCPeerConnection.prototype._oneAtATime = function (fn) {
 
 RTCPeerConnection.prototype.createOffer = function () {
   return this._oneAtATime(function () {
-    return ipInfo().then(this.constructSDPFromInfo);
+    return ipInfo().then(this._constructSDPFromInfo);
   });
 };
 
