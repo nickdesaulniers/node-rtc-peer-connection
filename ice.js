@@ -9,47 +9,15 @@ var vsStun = require('vs-stun');
 function IceAgent (config) {
   EventEmitter.call(this);
 
-  // hmm, so the ice agent is going to manage multiple sockets.
-  // TODO: should be multiple candidates, maybe the candidate interface manages
-  // sockets.
-  this.sockets = new Map;
-
   // https://tools.ietf.org/html/rfc5245#section-2.2
   this.candidates = [];
   this.candidatePairs = [];
   this.checks = [];
 
-  this.internal = {
-    addr: null,
-    port: null,
-  };
-  this.external = {
-    addr: null,
-    port: null,
-  };
   this.config = config;
 };
 
 util.inherits(IceAgent, EventEmitter);
-
-IceAgent.prototype.init = function (datachannel) {
-  var socket = udp.createSocket('udp4');
-  this.sockets[datachannel] = socket;
-
-  var iceAgent = this;
-  socket.on('listening', function () {
-    var stunServer = iceAgent.getFirstStunServer();
-    vsStun.resolve(socket, stunServer, function (error, value) {
-      if (error) {
-        iceAgent.emit('error', error);
-        return;
-      }
-      iceAgent.emit('open', datachannel);
-    });
-  });
-
-  socket.bind();
-};
 
 IceAgent.prototype.getFirstStunServer = function () {
   var servers = this.config.iceServers;
@@ -99,7 +67,7 @@ IceAgent.prototype.gatherHostCandidates = function () {
       return;
     }
     var socketType = inet.family === 'IPv4' ? 'udp4' : 'udp6';
-    var socket = dgram.createSocket(socketType);
+    var socket = udp.createSocket(socketType);
     promises.push(new Promise(function (resolve, reject) {
       socket.bind(null, inet.address, function () {
         var info = socket.address();

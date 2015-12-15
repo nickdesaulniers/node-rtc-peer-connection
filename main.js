@@ -48,6 +48,7 @@ RTC.prototype.handleEvent = function (e) {
     var msg = JSON.parse(e.data);
     this.onmessage(msg);
   } else if (e.type === 'negotiationneeded') {
+    console.log('negotiationneeded');
     this.onnegotiationneeded(e.target);
   } else if (e.type === 'icecandidate' && e.candidate) {
     this.ws.send(JSON.stringify(e.candidate));
@@ -75,7 +76,7 @@ RTC.prototype.onmessage = function (msg) {
     }
   } else if (msg.candidate) {
     var ic = new RTCIceCandidate(msg);
-    console.log(msg);
+    //console.log(msg);
     peer.addIceCandidate(ic).catch(this.logErr);
   }
 };
@@ -105,6 +106,7 @@ RTC.prototype.logErr = function (err) {
 RTC.prototype.call = function () {
   var peer = this.peers.length ? this.peers[0] : this.createPeer();
   var dc = peer.createDataChannel('hello');
+  dc.onopen = console.log.bind(console, 'open');
   this.dc = dc;
   return dc;
 };

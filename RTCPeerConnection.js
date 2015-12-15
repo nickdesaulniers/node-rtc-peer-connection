@@ -1,7 +1,5 @@
 var EventTarget = require('event-target-shim');
 var SDP = require('./sdp');
-var promisify = require('promisify-node');
-var ipInfo = promisify(require('./ip_info'));
 var RTCDataChannel = require('./RTCDataChannel');
 var IceAgent = require('./ice');
 var util = require('util');
@@ -10,13 +8,12 @@ var util = require('util');
 function RTCPeerConnection (configuration) {
   EventTarget.call(this);
 
-  // for debugging, will contain internal/external ip and ports after
-  // createOffer
-  this._info = null;
   this._configuration = null;
   this._markedForNegotiation = false;
+  this._negotiationNeeded = false;
   this._operations = [];
   this._dataChannels = [];
+
   // https://w3c.github.io/webrtc-pc/#dom-peerconnection
   this.setConfiguration(configuration);
   this.signalingState = 'stable';
@@ -29,7 +26,6 @@ function RTCPeerConnection (configuration) {
   this.localDescription = null;
 
   this._iceAgent = new IceAgent(this.getConfiguration());
-  this._iceAgent.on('open', this._channelOpen.bind(this));
 };
 
 var emittedEvents = [
@@ -39,8 +35,7 @@ var emittedEvents = [
 util.inherits(RTCPeerConnection, EventTarget(emittedEvents));
 
 RTCPeerConnection.prototype._constructSDPFromInfo = function (info) {
-  this._info = info;
-
+  //console.log(info);
   var sdp = new SDP;
   sdp.setExternalAddr(info.external.addr);
   sdp.setExternalPort(info.external.port);
@@ -72,7 +67,8 @@ RTCPeerConnection.prototype._oneAtATime = function (fn) {
 
 RTCPeerConnection.prototype.createOffer = function () {
   return this._oneAtATime(function () {
-    return ipInfo().then(this._constructSDPFromInfo);
+    return this._iceAgent.gatherAllCandidates().then(this._constructSDPFromInfo)
+      .catch(function (err) { console.error(err); });
   });
 };
 
@@ -99,12 +95,15 @@ RTCPeerConnection.prototype.createDataChannel = function (label, dataChannelDict
   // TODO: steps 4 - 9, GH Issue #11
 
   setImmediate(function () {
-    this._iceAgent.init(channel, this.getConfiguration());
+    if (this._dataChannels.length === 1) {
+      this._setNegotiationNeeded();
+    }
   }.bind(this));
 
   return channel;
 };
 
+// TODO: it's way too early to even be thinking about this method...
 RTCPeerConnection.prototype._channelOpen = function (channel) {
   // https://w3c.github.io/webrtc-pc/#announce-datachannel-open
   if (this.signalingState === 'closed') {
@@ -113,9 +112,6 @@ RTCPeerConnection.prototype._channelOpen = function (channel) {
   }
   channel.readyState = 'open';
   channel.dispatchEvent({ type: 'open' });
-  if (this._dataChannels.length === 1) {
-    this.dispatchEvent({ type: 'negotiationneeded' });
-  }
 };
 
 RTCPeerConnection.prototype.setLocalDescription = function (desc) {
@@ -125,7 +121,26 @@ RTCPeerConnection.prototype.setLocalDescription = function (desc) {
   // https://w3c.github.io/webrtc-pc/#idl-def-RTCSessionDescriptionInit
   this.localDescription = desc;
 
+  // https://w3c.github.io/webrtc-pc/#h-clearing-negotiation-needed
+  this._resetNegotiationNeeded();
+
   return Promise.resolve(void 0);
+};
+
+RTCPeerConnection.prototype._setNegotiationNeeded = function () {
+  // https://w3c.github.io/webrtc-pc/#h-setting-negotiation-needed
+  this._negotiationNeeded = true;
+
+  // https://w3c.github.io/webrtc-pc/#h-firing-an-event
+  if (!this._markedForNegotiation) {
+    this._markedForNegotiation = true;
+    this.dispatchEvent({ type: 'negotiationneeded'});
+  }
+};
+
+RTCPeerConnection.prototype._resetNegotiationNeeded = function () {
+  // https://w3c.github.io/webrtc-pc/#h-clearing-negotiation-needed
+  this._negotiationNeeded = false;
 };
 
 module.exports = RTCPeerConnection;
