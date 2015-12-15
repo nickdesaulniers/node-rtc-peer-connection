@@ -16,6 +16,7 @@ peer.onnegotiationneeded = function () {
     return peer.setLocalDescription(offer);
   }).then(function () {
     console.log(peer.localDescription);
+    console.log(peer.localDescription.sdp.split('\r\n'));
   });
 };
 
