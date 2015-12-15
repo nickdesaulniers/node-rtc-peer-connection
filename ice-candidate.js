@@ -1,8 +1,11 @@
-function ICECandidate (type, socket, foundation) {
+function ICECandidate (type, socket, addr, port, foundation) {
   // https://tools.ietf.org/html/rfc5245#section-2.1
   this.type = type;
-  // socket.address() returns an object with port and address members
   this.socket = socket;
+  // the addr and port are different from socket.address() in the case of
+  // STUN and TURN.
+  this.addr = addr;
+  this.port = port;
   this.foundation = foundation;
 };
 

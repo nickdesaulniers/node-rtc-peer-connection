@@ -67,12 +67,16 @@ IceAgent.prototype.gatherAllCandidates = function () {
   // It sounds like the caller gathers all candidates, before sending the
   // encoded sdp over the signaling channel.
 
-  var promises = [];
-  promises.push(this.gatherHostCandidates());
-  return Promise.all(promises).then(function (candidates) {
-    return candidates;
-  });
-
+  // TODO: possible to remove .bind(this) ???
+  return this.gatherHostCandidates()
+    .then(function (hostCandidates) {
+      this.candidates = this.candidates.concat(hostCandidates);
+    }.bind(this))
+    .then(this.gatherStunCandidates.bind(this))
+    .then(function (stunCandidate) {
+      this.candidates.push(stunCandidate);
+      return this.candidates;
+    }.bind(this))
 };
 
 IceAgent.prototype.isLinkLocalAddress = function (inet) {
@@ -98,12 +102,36 @@ IceAgent.prototype.gatherHostCandidates = function () {
     var socket = dgram.createSocket(socketType);
     promises.push(new Promise(function (resolve, reject) {
       socket.bind(null, inet.address, function () {
-        resolve(new ICECandidate(ICECandidate.TYPES.HOST, socket));
+        var info = socket.address();
+        resolve(new ICECandidate(ICECandidate.TYPES.HOST, socket, info.address,
+          info.port));
       });
     }));
   });
   return Promise.all(promises);
 };
+
+IceAgent.prototype.gatherStunCandidates = function () {
+  var socket = udp.createSocket('udp4');
+  var stunServer = this.getFirstStunServer();
+
+  return new Promise(function (resolve, reject) {
+    socket.on('listening', function () {
+      vsStun.resolve(socket, stunServer, function (error, value) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(new ICECandidate(ICECandidate.TYPES.SERVER_REFLEXIVE, socket,
+            value.public.host, value.public.port))
+        }
+      });
+    });
+
+    socket.bind();
+  }.bind(this));
+};
+
+// TODO: gatherTurnCandidates
 
 module.exports = IceAgent;
 
