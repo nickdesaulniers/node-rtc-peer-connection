@@ -17,6 +17,6 @@ peer.onnegotiationneeded = function () {
   }).then(function () {
     console.log(peer.localDescription);
     console.log(peer.localDescription.sdp.split('\r\n'));
-  });
+  }).catch(function (e) { console.error(e); });
 };
 
