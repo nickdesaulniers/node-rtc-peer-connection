@@ -1,3 +1,10 @@
+var isNode = typeof module !== 'undefined';
+if (isNode) {
+  WebSocket = require('ws');
+  RTCPeerConnection = require('../lib/RTCPeerConnection');
+}
+
+
 var iceServers = {
   iceServers: [
       "stun.l.google.com:19302",
@@ -21,22 +28,24 @@ var iceServers = {
   }),
 };
 
-function uuid () {
-  // http://stackoverflow.com/a/2117523/1027966
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0;
-    var v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-};
+//function uuid () {
+  //// http://stackoverflow.com/a/2117523/1027966
+  //return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    //var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0;
+    //var v = c == 'x' ? r : (r & 0x3 | 0x8);
+    //return v.toString(16);
+  //});
+//};
 
 RTC.prototype.buildWS = function (url) {
   if (this.ws) return;
   var ws = new WebSocket(url);
   ws.onopen = function () {
-    window.addEventListener('beforeunload', function () {
-      ws.close();
-    });
+    if (!isNode) {
+      window.addEventListener('beforeunload', function () {
+        ws.close();
+      });
+    }
   };
   ws.addEventListener('message', this);
   return ws;
@@ -113,11 +122,14 @@ RTC.prototype.call = function () {
 
 
 function RTC (server) {
-  this.uuid = uuid();
+  //this.uuid = uuid();
   this.peers = [];
 
   this.ws = this.buildWS(server);
 };
 
-//
-a = new RTC('ws://localhost:8081')
+// main
+var a = new RTC('ws://localhost:8081');
+if (isNode) {
+  a.call();
+}
