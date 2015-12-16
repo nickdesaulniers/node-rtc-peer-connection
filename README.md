@@ -5,6 +5,9 @@ RTCPeerConnection for Node.js. This enables browser-peers to speak to
 non-browser (Node.js) peers, or non-browser peer to non-browser peer
 communication over RTCDataChannels.
 
+This includes a FULL ICE implementation that works with SDP (as opposed to
+SIP).
+
 ## Status
 
 Able to initiate a call and
