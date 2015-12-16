@@ -21,7 +21,7 @@ the websocket server (server.js), then opening localhost:8000 in Firefox,
 then running `node false_client.js`, checking Firefox's `about:webrtc` logs,
 reload Firefox tab, and iterating.
 
-## RFC list
+## IETF RFC list
 
 * [RFC 4566 - SDP (Session Description Protocol)](https://tools.ietf.org/html/rfc4566)
 * [RFC 5245 - ICE (Interactive Connectivity Establishment)](https://tools.ietf.org/html/rfc5245)
@@ -32,7 +32,8 @@ reload Firefox tab, and iterating.
 * [RFC 7064 - STUN URI Scheme](https://tools.ietf.org/html/rfc7064)
 * [DRAFT ???? - ICE w/ SDP & SIP](https://tools.ietf.org/html/draft-ietf-mmusic-ice-sip-sdp-07)
 
-## WebRTC Spec
+## W3C Specs
 
 [WebRTC](https://w3c.github.io/webrtc-pc/)
+[JSEP (Javascript Session Establishment Protocol)](https://rtcweb-wg.github.io/jsep/)
 
