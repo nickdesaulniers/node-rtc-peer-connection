@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "bignumber.js": "^2.1.4",
-    "event-target-shim": "^1.1.0",
+    "event-target-shim": "^1.1.1",
     "sdp-transform": "^1.5.3",
     "vs-stun": "0.0.7",
     "ws": "^0.8.1"
