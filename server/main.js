@@ -92,6 +92,7 @@ RTC.prototype.onmessage = function (msg) {
 
 RTC.prototype.onnegotiationneeded = function (peer) {
   peer.createOffer().then(function (offer) {
+    console.log(offer);
     return peer.setLocalDescription(offer);
   }).then(function () {
     this.ws.send(JSON.stringify(peer.localDescription));
