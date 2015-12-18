@@ -57,7 +57,7 @@ RTC.prototype.handleEvent = function (e) {
     var msg = JSON.parse(e.data);
     this.onmessage(msg);
   } else if (e.type === 'negotiationneeded') {
-    console.log('negotiationneeded');
+    //console.log('negotiationneeded');
     this.onnegotiationneeded(e.target);
   } else if (e.type === 'icecandidate' && e.candidate) {
     this.ws.send(JSON.stringify(e.candidate));
@@ -92,7 +92,7 @@ RTC.prototype.onmessage = function (msg) {
 
 RTC.prototype.onnegotiationneeded = function (peer) {
   peer.createOffer().then(function (offer) {
-    console.log(offer);
+    //console.log(offer);
     return peer.setLocalDescription(offer);
   }).then(function () {
     this.ws.send(JSON.stringify(peer.localDescription));
