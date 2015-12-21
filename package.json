@@ -7,7 +7,9 @@
     "is-ip": "^1.0.0",
     "sdp-transform": "^1.5.3",
     "selfsigned": "^1.7.0",
-    "vs-stun": "0.0.7",
+    "vs-stun": "0.0.7"
+  },
+  "devDependencies": {
     "ws": "^0.8.1"
   }
 }
