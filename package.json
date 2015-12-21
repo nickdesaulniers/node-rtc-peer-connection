@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bignumber.js": "^2.1.4",
+    "chalk": "^1.1.1",
     "event-target-shim": "^1.1.1",
     "sdp-transform": "^1.5.3",
     "selfsigned": "^1.7.0",
