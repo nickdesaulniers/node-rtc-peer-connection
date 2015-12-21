@@ -1,7 +1,9 @@
 var isNode = typeof module !== 'undefined';
 if (isNode) {
+  // Create new global vars.
   WebSocket = require('ws');
   RTCPeerConnection = require('../lib/RTCPeerConnection');
+  RTCSessionDescription = require('../lib/RTCSessionDescription');
 }
 
 
@@ -47,12 +49,15 @@ RTC.prototype.buildWS = function (url) {
       });
     }
   };
-  ws.addEventListener('message', this);
+  ws.addEventListener('message', function (m) {
+    console.log(m);
+    this.handleEvent(m);
+  }.bind(this));
   return ws;
 };
 
 RTC.prototype.handleEvent = function (e) {
-  //console.log(e.type, e);
+  console.log(e.type, e);
   if (e.type === 'message' && e.data) {
     var msg = JSON.parse(e.data);
     this.onmessage(msg);
@@ -81,6 +86,7 @@ RTC.prototype.onmessage = function (msg) {
         this.ws.send(JSON.stringify(peer.localDescription));
       }.bind(this)).catch(this.logErr);
     } else if (msg.type === 'answer') {
+      console.log('answer');
       peer.setRemoteDescription(sd).catch(this.logErr);
     }
   } else if (msg.candidate) {
