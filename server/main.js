@@ -87,7 +87,6 @@ RTC.prototype.onmessage = function (msg) {
         this.ws.send(JSON.stringify(peer.localDescription));
       }.bind(this)).catch(this.logErr);
     } else if (msg.type === 'answer') {
-      console.log('answer');
       peer.setRemoteDescription(sd).catch(this.logErr);
     }
   } else if (msg.candidate) {
