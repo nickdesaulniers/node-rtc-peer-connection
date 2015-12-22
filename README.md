@@ -13,16 +13,15 @@ SIP).
 Able to initiate a call and
 [connect successfully to Firefox](https://twitter.com/LostOracle/status/672532399138324480).
 
-Still too tightly coupled to my signaling server, not RFC compliant, can't
-receive calls, doesn't work with other browsersi (haven't tried).
+Not RFC compliant, can't receive calls, doesn't work with other browsers
+(haven't tried).
 
-the current progress involes setting up an http server for index.html, then
-the websocket server (server.js), then opening localhost:8000 in Firefox,
-then running `node false_client.js`, checking Firefox's `about:webrtc` logs,
-reload Firefox tab, and iterating.
+the current progress involes setting up an http server for index.html, then the
+websocket server (server.js), then opening the served version of index.html in
+Firefox, then running `node server/main.js`, checking Firefox's `about:webrtc`
+logs, reload Firefox tab, and iterating.
 
 ## IETF RFC list
-
 * [RFC 3264 - SDP Offer/Answer](https://tools.ietf.org/html/rfc3264)
 * [RFC 4566 - SDP (Session Description Protocol)](https://tools.ietf.org/html/rfc4566)
 * [RFC 4572 - SDP Fingerprint](https://tools.ietf.org/html/rfc4572)
@@ -42,7 +41,10 @@ Prefer these to specs when applicable.
 
 
 ## W3C Specs
-
 * [WebRTC](https://w3c.github.io/webrtc-pc/)
 * [JSEP (Javascript Session Establishment Protocol)](https://rtcweb-wg.github.io/jsep/)
+
+## Useful reads
+* [PeerConnection.js](https://dxr.mozilla.org/mozilla-central/source/dom/media/PeerConnection.js)
+* [OpenTok.js](https://dxr.mozilla.org/mozilla-central/source/browser/extensions/loop/content/shared/vendor/sdk.js)
 
