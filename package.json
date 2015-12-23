@@ -3,6 +3,7 @@
     "bignumber.js": "^2.1.4",
     "chalk": "^1.1.1",
     "copy-to": "^2.0.1",
+    "enum": "^2.3.0",
     "event-target-shim": "^1.1.1",
     "is-ip": "^1.0.0",
     "n-pair": "0.0.0",
