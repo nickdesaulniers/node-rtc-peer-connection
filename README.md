@@ -17,18 +17,18 @@ Not RFC compliant, can't receive calls, doesn't work with other browsers
 (haven't tried).
 
 - [x] STUN
-- [] TURN
+- [ ] TURN
 - [x] SDP
-- [] SIP (no plans to implement)
-- [] ICE Lite (no plans to implement)
-- [] ICE Full
-- [] ICE Half Trickle
-- [] ICE Full Trickle
-- [] DTLS
-- [] SCTP
-- [] RTCPeerConnection
-- [] DataChannel
-- [] Audio/Video (not planned, but maybe)
+- [ ] SIP (no plans to implement)
+- [ ] ICE Lite (no plans to implement)
+- [ ] ICE Full
+- [ ] ICE Half Trickle
+- [ ] ICE Full Trickle
+- [ ] DTLS
+- [ ] SCTP
+- [ ] RTCPeerConnection
+- [ ] DataChannel
+- [ ] Audio/Video (not planned, but maybe)
 
 The current process involves running `node server/server.js`, then opening
 `localhost:8080` in Firefox, then running `node server/main.js`, checking
