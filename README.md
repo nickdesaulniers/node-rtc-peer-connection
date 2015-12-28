@@ -22,7 +22,7 @@ Not RFC compliant, can't receive calls, doesn't work with other browsers
 - [ ] SIP (no plans to implement)
 - [ ] ICE Lite (no plans to implement)
 - [ ] ICE Full
-- [ ] ICE Half Trickle
+- [x] ICE Half Trickle
 - [ ] ICE Full Trickle
 - [ ] DTLS
 - [ ] SCTP
