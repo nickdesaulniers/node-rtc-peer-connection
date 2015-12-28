@@ -1,6 +1,20 @@
+var chalk = require('chalk');
+var ecstatic = require('ecstatic');
+var http = require('http');
 var WebSocketServer = require('ws').Server;
-var wss = new WebSocketServer({ port: 8081 });
 
+const HTTP_PORT = 8080;
+const WS_PORT = 8081;
+
+http.createServer(ecstatic({
+  root: __dirname,
+})).listen(HTTP_PORT, function () {
+  console.log(chalk.green('http server listening on port ' + HTTP_PORT));
+});
+
+// TODO: it is insecure to use a non encrypted transport for signaling.
+// We already have the dependency on generating certs on the fly, use that.
+var wss = new WebSocketServer({ port: WS_PORT });
 wss.on('connection', function (ws) {
   ws.on('message', function (message) {
     wss.clients.forEach(function (client) {
@@ -11,3 +25,7 @@ wss.on('connection', function (ws) {
     console.log('received: %s', message);
   });
 });
+wss.on('listening', function () {
+  console.log(chalk.green('ws server listening on port ' + WS_PORT));
+});
+

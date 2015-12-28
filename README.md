@@ -16,10 +16,23 @@ Able to initiate a call and
 Not RFC compliant, can't receive calls, doesn't work with other browsers
 (haven't tried).
 
-the current progress involes setting up an http server for index.html, then the
-websocket server (server.js), then opening the served version of index.html in
-Firefox, then running `node server/main.js`, checking Firefox's `about:webrtc`
-logs, reload Firefox tab, and iterating.
+- [x] STUN
+- [] TURN
+- [x] SDP
+- [] SIP (no plans to implement)
+- [] ICE Lite (no plans to implement)
+- [] ICE Full
+- [] ICE Half Trickle
+- [] ICE Full Trickle
+- [] DTLS
+- [] SCTP
+- [] RTCPeerConnection
+- [] DataChannel
+- [] Audio/Video (not planned, but maybe)
+
+The current process involves running `node server/server.js`, then opening
+`localhost:8080` in Firefox, then running `node server/main.js`, checking
+Firefox's `about:webrtc` logs, reload Firefox tab, and iterating.
 
 ## IETF RFC list
 * [RFC 3264 - SDP Offer/Answer](https://tools.ietf.org/html/rfc3264)
