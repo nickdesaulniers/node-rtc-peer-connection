@@ -7,6 +7,13 @@ if (isNode) {
   RTCIceCandidate = require('../lib/RTCIceCandidate');
 }
 
+// Firefox 42 support
+if ('mozRTCPeerConnection' in this) {
+  RTCPeerConnection = mozRTCPeerConnection;
+  RTCSessionDescription = mozRTCSessionDescription;
+  RTCIceCandidate = mozRTCIceCandidate;
+}
+
 
 var iceServers = {
   iceServers: [
