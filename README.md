@@ -1,12 +1,12 @@
 # Node-RTCPeerConnection
 
 An attempt (current WIP) to create a spec compliant implementation of
-RTCPeerConnection for Node.js. This enables browser-peers to speak to
-non-browser (Node.js) peers, or non-browser peer to non-browser peer
-communication over RTCDataChannels.
+RTCPeerConnection for Node.js entirely in JavaScript with no native C or C++
+code. This enables browser-peers to speak to non-browser (Node.js) peers, or
+non-browser peer to non-browser peer communication over RTCDataChannels.
 
 This includes a FULL ICE implementation that works with SDP (as opposed to
-SIP).
+SIP, though the two can be decoupled).
 
 ## Status
 
@@ -22,8 +22,8 @@ Not RFC compliant, can't receive calls, doesn't work with other browsers
 - [ ] SIP (no plans to implement)
 - [ ] ICE Lite (no plans to implement)
 - [ ] ICE Full
-- [x] ICE Half Trickle
-- [ ] ICE Full Trickle
+- [ ] ICE Half Trickle (no plans to implement)
+- [x] ICE Full Trickle
 - [ ] DTLS
 - [ ] SCTP
 - [ ] RTCPeerConnection
