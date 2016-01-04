@@ -16,17 +16,22 @@ Able to initiate a call and
 Not RFC compliant, can't receive calls, doesn't work with other browsers
 (haven't tried).
 
-- [x] STUN
-- [ ] TURN
-- [x] SDP
-- [ ] SIP (no plans to implement)
-- [ ] ICE Lite (no plans to implement)
-- [ ] ICE Full
-- [ ] ICE Half Trickle (no plans to implement)
-- [x] ICE Full Trickle
+- [ ] ICE
+  - [x] SDP
+  - [ ] SIP (no plans to implement)
+  - [ ] ICE Lite (no plans to implement)
+  - [ ] ICE Full
+    - [x] HOST Candidates
+    - [ ] ICE Half Trickle (no plans to implement)
+    - [x] ICE Full Trickle
+      - [x] SRFLX Candidates (STUN)
+      - [x] RELAYED Candidates (TURN)
+      - [ ] PRFLX Candidates
 - [ ] DTLS
 - [ ] SCTP
 - [ ] RTCPeerConnection
+  - [x] Newer Promise API from Spec
+  - [ ] Older Callback API from Spec (no plans to implement)
 - [ ] DataChannel
 - [ ] Audio/Video (not planned, but maybe)
 
