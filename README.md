@@ -25,7 +25,7 @@ Not RFC compliant, can't receive calls, doesn't work with other browsers
     - [ ] ICE Half Trickle (no plans to implement)
     - [x] ICE Full Trickle
       - [x] SRFLX Candidates (STUN)
-      - [x] RELAYED Candidates (TURN)
+      - [ ] RELAYED Candidates (TURN)
       - [ ] PRFLX Candidates
 - [ ] DTLS
 - [ ] SCTP

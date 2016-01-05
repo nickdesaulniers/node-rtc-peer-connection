@@ -5,6 +5,7 @@
     "copy-to": "^2.0.1",
     "enum": "^2.3.0",
     "event-target-shim": "^1.1.1",
+    "ipv6-normalize": "^1.0.1",
     "is-ip": "^1.0.0",
     "n-pair": "0.0.0",
     "sdp-transform": "^1.5.3",
