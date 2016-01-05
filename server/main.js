@@ -75,7 +75,7 @@ RTC.prototype.handleEvent = function (e) {
   } else if (e.type === 'icecandidate' && e.candidate) {
     this.ws.send(JSON.stringify(e.candidate));
   // a dc was established from the other side
-  } else if (e.type === 'datachannel'){
+  } else if (e.type === 'datachannel') {
     this.dc = e.channel;
   }
 };
@@ -117,6 +117,7 @@ RTC.prototype.createPeer = function () {
   // triggered if/when peer.createDataChannel is called
   peer.addEventListener('negotiationneeded', this);
   peer.addEventListener('datachannel', this);
+  peer.addEventListener('iceconnectionstatechange', this)
   this.peers.push(peer);
   return peer;
 };
