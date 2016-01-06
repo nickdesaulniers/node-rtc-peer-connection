@@ -1,7 +1,11 @@
 {
   "scripts": {
     "start": "node server/server.js",
-    "test": "node server/main.js"
+    "test": "node server/main.js",
+    "lint": "node_modules/.bin/jshint server || true"
+  },
+   "jshintConfig": {
+    "camelcase": true
   },
   "dependencies": {
     "bignumber.js": "^2.1.4",
@@ -14,7 +18,8 @@
     "sdp-transform": "^1.5.3",
     "selfsigned": "^1.7.0",
     "vs-stun": "nickdesaulniers/vs-stun#encodeIpv6Addr",
-    "wrtc-ice-cand-parse": "0.0.11"
+    "wrtc-ice-cand-parse": "0.0.11",
+    "jshint": "^2.8.0"
   },
   "devDependencies": {
     "ecstatic": "^1.4.0",
