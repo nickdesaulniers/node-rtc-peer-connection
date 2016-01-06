@@ -1,4 +1,10 @@
 {
+	"TASK_SERVER_PID":"NOTSET",
+  "scripts": {
+    "start": "node server/server.js & export TASK_SERVER_PID=$! && echo TASK_SERVER_PID=$TASK_SERVER_PID > taskserverpid.txt",
+    "stop": "source taskserverpid.txt && kill $TASK_SERVER_PID",
+    "test": "node server/main.js"
+  },
   "dependencies": {
     "bignumber.js": "^2.1.4",
     "chalk": "^1.1.1",
