@@ -14,6 +14,10 @@ if ('mozRTCPeerConnection' in this) {
   RTCIceCandidate = mozRTCIceCandidate;
 }
 
+// Opera 35 support
+if ('webkitRTCPeerConnection' in this) {
+  RTCPeerConnection = webkitRTCPeerConnection;
+}
 
 var iceServers = {
   iceServers: [
