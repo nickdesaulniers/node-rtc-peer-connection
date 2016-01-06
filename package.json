@@ -4,6 +4,9 @@
     "test": "node server/main.js",
     "lint": "node_modules/.bin/jshint server || true"
   },
+   "jshintConfig": {
+    "camelcase": true
+  },
   "dependencies": {
     "bignumber.js": "^2.1.4",
     "chalk": "^1.1.1",
