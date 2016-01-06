@@ -52,6 +52,7 @@ var iceServers = {
 //};
 
 RTC.prototype.buildWS = function (url) {
+  var rtc = this;
   if (this.ws) return;
   var ws = new WebSocket(url);
   ws.onopen = function () {
@@ -59,6 +60,7 @@ RTC.prototype.buildWS = function (url) {
       window.addEventListener('beforeunload', function () {
         ws.close();
       });
+      rtc.call();
     }
   };
   ws.addEventListener('message', function (m) {
@@ -148,6 +150,3 @@ function RTC (server) {
 
 // main
 var a = new RTC('ws://localhost:8081');
-if (isNode) {
-  a.call();
-}
