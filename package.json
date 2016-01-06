@@ -1,8 +1,6 @@
 {
-	"TASK_SERVER_PID":"NOTSET",
   "scripts": {
-    "start": "node server/server.js & export TASK_SERVER_PID=$! && echo TASK_SERVER_PID=$TASK_SERVER_PID > taskserverpid.txt",
-    "stop": "source taskserverpid.txt && kill $TASK_SERVER_PID",
+    "start": "node server/server.js",
     "test": "node server/main.js"
   },
   "dependencies": {
