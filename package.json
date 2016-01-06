@@ -6,7 +6,7 @@
     "enum": "^2.3.0",
     "event-target-shim": "^1.1.1",
     "ipv6-normalize": "^1.0.1",
-    "n-pair": "0.0.0",
+    "node-dtls": "Rantanen/node-dtls",
     "sdp-transform": "^1.5.3",
     "selfsigned": "^1.7.0",
     "vs-stun": "nickdesaulniers/vs-stun#encodeIpv6Addr",
