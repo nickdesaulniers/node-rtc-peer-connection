@@ -2,7 +2,8 @@
   "scripts": {
     "start": "node server/server.js",
     "test": "node server/main.js",
-    "lint": "node_modules/.bin/jshint server lib || true"
+    "lint": "node_modules/.bin/jshint server lib || true",
+    "style": "node_modules/.bin/jscs server lib || true"
   },
   "dependencies": {
     "bignumber.js": "^2.1.4",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "ecstatic": "^1.4.0",
+    "jscs": "^2.8.0",
     "jshint": "^2.8.0",
     "ws": "^1.0.1"
   }
