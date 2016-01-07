@@ -53,7 +53,9 @@ var iceServers = {
 
 RTC.prototype.buildWS = function (url) {
   var rtc = this;
-  if (this.ws) return;
+  if (this.ws) {
+    return;
+  }
   var ws = new WebSocket(url);
   ws.onopen = function () {
     if (!isNode) {
@@ -123,7 +125,7 @@ RTC.prototype.createPeer = function () {
   // triggered if/when peer.createDataChannel is called
   peer.addEventListener('negotiationneeded', this);
   peer.addEventListener('datachannel', this);
-  peer.addEventListener('iceconnectionstatechange', this)
+  peer.addEventListener('iceconnectionstatechange', this);
   this.peers.push(peer);
   return peer;
 };

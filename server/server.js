@@ -3,8 +3,8 @@ var ecstatic = require('ecstatic');
 var http = require('http');
 var WebSocketServer = require('ws').Server;
 
-const HTTP_PORT = 8080;
-const WS_PORT = 8081;
+var HTTP_PORT = 8080;
+var WS_PORT = 8081;
 
 http.createServer(ecstatic({
   root: __dirname,
