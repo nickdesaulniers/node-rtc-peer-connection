@@ -14,12 +14,12 @@
     "enum": "^2.3.0",
     "event-target-shim": "^1.1.1",
     "ipv6-normalize": "^1.0.1",
+    "jshint": "^2.8.0",
     "node-dtls": "Rantanen/node-dtls",
     "sdp-transform": "^1.5.3",
     "selfsigned": "^1.7.0",
-    "vs-stun": "nickdesaulniers/vs-stun#encodeIpv6Addr",
-    "wrtc-ice-cand-parse": "0.0.11",
-    "jshint": "^2.8.0"
+    "vs-stun": "nickdesaulniers/vs-stun#nick",
+    "wrtc-ice-cand-parse": "0.0.11"
   },
   "devDependencies": {
     "ecstatic": "^1.4.0",
