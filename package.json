@@ -5,6 +5,9 @@
     "lint": "node_modules/.bin/jshint server lib || true",
     "style": "node_modules/.bin/jscs server lib || true"
   },
+  "engines" : {
+    "node" : ">=5.0.0"
+  },
   "dependencies": {
     "bignumber.js": "^2.1.4",
     "chalk": "^1.1.1",
